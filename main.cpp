@@ -4,25 +4,27 @@
 #include "Entity.h"
 #include "Player.h"
 #include "Enemy1.h"
+#include "Map.h"
 
 
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 600
+#define WINDOW_WIDTH 640
+#define WINDOW_HEIGHT 360
 
 int main() {
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Bouncing Ball with Chipmunk2D");
 	window.setFramerateLimit(60);
 
-
 	Player player;
+	Map map;
 	std::vector<Enemy1> enemyVector;
 
-
-	for (size_t i = 0; i < 2; i++)
+	for (size_t i = 0; i < 3; i++)
 	{
 		Enemy1 enemy1;
 		enemyVector.push_back(enemy1);
 	}
+
+
 
 	while (window.isOpen()) {
 		sf::Event event;
@@ -31,25 +33,24 @@ int main() {
 				window.close();
 		}
 
-		player.update();
+
+		player.update(map);
+		map.update();
 
 		for (size_t i = 0; i < enemyVector.size(); i++)
 		{
 			enemyVector[i].update(player);
 		}
 
-		window.clear(sf::Color::Black);
 
+		window.clear(sf::Color::Black);
 		player.draw(window);
-		
 		for (size_t i = 0; i < enemyVector.size(); i++)
 		{
 			enemyVector[i].draw(window);
 		}
-
+		map.drawFirstLayer(window);
 		window.display();
 	}
-
-
 	return 0;
 }

@@ -13,7 +13,7 @@ public:
 	void initialize() override;
 	void draw(sf::RenderWindow& window) override;
 
-	void move();
+	void move(Player& player);
 	void update(Player& player);
 	bool fieldOfView(Player& player);
 
@@ -22,8 +22,9 @@ private:
 	sf::Clock ClockForView;
 
 	sf::RectangleShape view;
+	
 	bool inView = false;
 
 	float timeForMovement;
-	float randNumForMovement;
+	int randNumForMovement;
 };

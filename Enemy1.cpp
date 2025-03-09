@@ -1,5 +1,6 @@
 #include "Enemy1.h"
 #include <cstdlib>
+#include <stdlib.h> 
 
 Enemy1::Enemy1()
 {
@@ -25,33 +26,53 @@ void Enemy1::initialize()
 }
 
 
-void Enemy1::move()
+void Enemy1::move(Player& player)
 {
-	
+	isMovingUp = false;
+	isMovingLeft = false;
+	isMovingDown = false;
+	isMovingRight = false;
+
 	if (clockForMovement.getElapsedTime().asSeconds() > timeForMovement)
 	{
 		randNumForMovement = std::rand() % 4 + 1;
-		std::cout << randNumForMovement << std::endl;
 		clockForMovement.restart();
 	}
 
-	randNumForMovement == 1 ? hitbox.move(0, -3 * speed) : (randNumForMovement == 2 ? hitbox.move(0, 3 * speed) :
-		(randNumForMovement == 3 ? hitbox.move(-3 * speed, 0) : hitbox.move(3 * speed, 0)));
+	if (inView)
+	{
+		sf::Vector2f direction = player.getHitboxPosition() - hitbox.getPosition();
+	}
+
+
+	switch (randNumForMovement)
+	{
+	case 1: hitbox.move(0, -3 * speed), isMovingUp = true; break;
+	case 2: hitbox.move(-3 * speed, 0), isMovingLeft = true; break;
+	case 3: hitbox.move(0, 3 * speed), isMovingDown = true; break;
+	case 4: hitbox.move(3 * speed, 0), isMovingRight = true; break;
+
+	default:
+		break;
+	}
+
+	/*std::system("cls");*/
+	/*std::cout << isMoovingUp << " " << isMoovingLeft << " " << isMoovinDown << " " << isMoovingRight << std::endl;*/
 }
 
 void Enemy1::update(Player& player)
 {
-	move();
+	move(player);
 	fieldOfView(player);
 }
 
 bool Enemy1::fieldOfView(Player& player)
 {
-	view.setSize(sf::Vector2f(128, 128));
-	view.setPosition(hitbox.getPosition().x - 48, hitbox.getPosition().y - 48);
 	
 	if (inView)
 	{
+		view.setSize(sf::Vector2f(192, 192));
+		view.setPosition(hitbox.getPosition().x - 80, hitbox.getPosition().y - 80);
 		view.setFillColor(sf::Color::Transparent);
 		view.setOutlineColor(sf::Color::Red);
 		view.setOutlineThickness(2);
@@ -59,6 +80,8 @@ bool Enemy1::fieldOfView(Player& player)
 	
 	else
 	{
+		view.setSize(sf::Vector2f(128, 128));
+		view.setPosition(hitbox.getPosition().x - 48, hitbox.getPosition().y - 48);
 		view.setFillColor(sf::Color::Transparent);
 		view.setOutlineColor(sf::Color::Blue);
 		view.setOutlineThickness(2);

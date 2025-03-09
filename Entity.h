@@ -13,8 +13,12 @@ public:
 	virtual void draw(sf::RenderWindow& window) = 0;
 
 	sf::RectangleShape getHitbox();
+	sf::Vector2f getHitboxPosition();
+	sf::Vector2f NormalizeVector(sf::Vector2f vector);
 
 protected:
+	sf::Vector2f direction;
+
 	sf::RectangleShape hitbox;
 	sf::Color hitboxColor;
 
@@ -22,9 +26,9 @@ protected:
 	float widht;
 	float speed;
 
-	bool isMoovingUp = false;
-	bool isMoovinDown = false;
-	bool isMoovingRight = false;
-	bool isMoovingLeft = false;
+	bool isMovingUp = false;
+	bool isMovingDown = false;
+	bool isMovingRight = false;
+	bool isMovingLeft = false;
 
 };
