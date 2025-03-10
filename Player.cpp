@@ -1,4 +1,5 @@
-#include "Player.h"
+﻿#include "Player.h"
+#include <cmath>
 
 Player::Player()
 {
@@ -12,13 +13,19 @@ Player::~Player()
 void Player::initialize()
 {
 	speed = 1.0f;
-	widht = 16.0f;
-	height = 16.0f;
+	widht = 32.0f;
+	height = 32.0f;
 
 	hitboxColor = sf::Color::Green;
 	hitbox = sf::RectangleShape(sf::Vector2f(widht, height));
 	hitbox.setFillColor(hitboxColor);
-	hitbox.setPosition(0, 0);
+	hitbox.setPosition(320, 160);
+
+	cameraHitbox.setOrigin(640, 360);
+	cameraHitbox.setSize(sf::Vector2f(1280, 720));
+	cameraHitbox.setFillColor(sf::Color::Transparent);
+	cameraHitbox.setOutlineColor(sf::Color::Magenta);
+	cameraHitbox.setOutlineThickness(2);
 }
 
 void Player::move(Map& map)
@@ -29,94 +36,160 @@ void Player::move(Map& map)
 	isMovingLeft = false;
 
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && !isMovingDown && !downCollision)
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && !isMovingDown)
 	{
 		hitbox.move(0, -3 * speed);
 		isMovingUp = true;
 	}
 	
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && !isMovingRight && !leftCollision)
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && !isMovingRight)
 	{
 		hitbox.move(-3 * speed, 0);
 		isMovingLeft = true;
 	}
 	
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && !isMovingUp && !upCollision)
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && !isMovingUp)
 	{
 		hitbox.move(0, 3 * speed);
 		isMovingDown = true;
 	}
 	
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && !isMovingLeft && !rightCollision)
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && !isMovingLeft)
 	{
 		hitbox.move(3 * speed, 0);
 		isMovingRight = true;
 	}
 	
-	{
-		system("cls");
-		std::cout << "W - " << isMovingUp << " A - " << isMovingLeft << " S - " << isMovingDown << " D - " << isMovingRight << std::endl;
-		std::cout << direction.x << " - " << direction.y;
-		std::cout << "\nUP - " << upCollision << " DOWN - " << downCollision << " RIGHT - " << rightCollision << " LEFT - " << leftCollision << std::endl;
-	}
+// 	{
+// 		system("cls");
+// 		std::cout << "W - " << isMovingUp << " A - " << isMovingLeft << " S - " << isMovingDown << " D - " << isMovingRight << std::endl;
+// 		std::cout << direction.x << " - " << direction.y;
+// 		std::cout << "\nUP - " << upCollision << " DOWN - " << downCollision << " RIGHT - " << rightCollision << " LEFT - " << leftCollision << std::endl;
+// 	}
 
 }
 
 void Player::collisions(Map& map)
 {
-	direction = sf::Vector2f(0, 0);
+	sf::FloatRect playerRect = hitbox.getGlobalBounds();
+	const float tolerance = 2.0f; // Если пересечение меньше 2 пикселей, игнорируем его
 
 	upCollision = false;
 	downCollision = false;
-	rightCollision = false;
 	leftCollision = false;
+	rightCollision = false;
 
+	// X
 	for (const auto& mapHitbox : map.mapHitbox)
 	{
-		float hitboxCenterX = hitbox.getGlobalBounds().left + hitbox.getGlobalBounds().width / 2;
-		float hitboxCenterY = hitbox.getGlobalBounds().top + hitbox.getGlobalBounds().height / 2;
-		float mapHitboxCenterX = mapHitbox.getGlobalBounds().left + mapHitbox.getGlobalBounds().width / 2;
-		float mapHitboxCenterY = mapHitbox.getGlobalBounds().top + mapHitbox.getGlobalBounds().height / 2;
-
-		float deltaX = hitboxCenterX - mapHitboxCenterX;
-		float deltaY = hitboxCenterY - mapHitboxCenterY;
-
-		if (hitbox.getGlobalBounds().intersects(mapHitbox.getGlobalBounds()))
+		sf::FloatRect obstacleRect = mapHitbox.getGlobalBounds();
+		sf::FloatRect intersection;
+		if (playerRect.intersects(obstacleRect, intersection))
 		{
-			//direction = sf::Vector2f(hitbox.getPosition().x + hitbox.getSize().x / 2, hitbox.getPosition().y + hitbox.getSize().y / 2) -
-			//	sf::Vector2f(mapHitbox.getPosition().x + mapHitbox.getSize().x / 2, mapHitbox.getPosition().y + mapHitbox.getSize().y / 2); // ������ ������������ ������ � �������
-			//direction = NormalizeVector(direction); // ������������ ������� ������������
+			// Если пересечение по оси X меньше, чем по Y, обрабатываем горизонтально
+			if (intersection.width < intersection.height && intersection.width > tolerance)
+			{
+				if (playerRect.left < obstacleRect.left)
+				{
+					hitbox.move(-intersection.width, 0);
+					rightCollision = true;
+				}
+				else
+				{
+					hitbox.move(intersection.width, 0);
+					leftCollision = true;
+				}
+				playerRect = hitbox.getGlobalBounds();
+			}
+		}
+	}
 
-			//direction.x > 0 ? leftCollision = true : rightCollision = true;
-			//direction.y > 0 ? downCollision = true : upCollision = true;
-
-			if (abs(deltaX) > abs(deltaY) && deltaX > 0) 
+	// Y
+	// Обновляем playerRect после горизонтальной коррекции
+	playerRect = hitbox.getGlobalBounds();
+	for (const auto& mapHitbox : map.mapHitbox)
+	{
+		sf::FloatRect obstacleRect = mapHitbox.getGlobalBounds();
+		sf::FloatRect intersection;
+		if (playerRect.intersects(obstacleRect, intersection))
+		{
+			if (intersection.height < intersection.width && intersection.height > tolerance)
 			{
-				leftCollision = true; 
+				if (playerRect.top < obstacleRect.top)
+				{
+					hitbox.move(0, -intersection.height);
+					downCollision = true;
+				}
+				else
+				{
+					hitbox.move(0, intersection.height);
+					upCollision = true;
+				}
+				playerRect = hitbox.getGlobalBounds();
 			}
-			else if (abs(deltaX) > abs(deltaY) && deltaX < 0)
-			{
-				rightCollision = true; 
-			}
-			else if (abs(deltaX) <= abs(deltaY) && deltaY > 0) 
-			{
-				downCollision = true; 
-			}
-			else {
-				upCollision = true;
-			}
-			std::cout << "collision" << std::endl;
 		}
 	}
 }
 
+
 void Player::update(Map &map)
 {
-	move(map);
 	collisions(map);
+	move(map);
+
+	view = camera(view);
 }
 
 void Player::draw(sf::RenderWindow& window)
 {
 	window.draw(hitbox);
+	window.setView(view);
+}
+
+sf::View Player::camera(sf::View view)
+{
+	int offset = 10;
+	
+	float leftBorder = view.getCenter().x - offset;
+	float rightBorder = view.getCenter().x + offset;
+
+	float upBorder = view.getCenter().y - offset;
+	float downBorder = view.getCenter().y + offset;
+
+	float smoothFactor = 0.1f;
+
+	// Позиция игрока
+	float playerX = hitbox.getPosition().x;
+	float cameraX = view.getCenter().x;
+
+	float playerY = hitbox.getPosition().y;
+	float cameraY = view.getCenter().y;
+
+	if (playerX < leftBorder)
+	{
+		cameraX = playerX + offset;
+	}
+	else if (playerX > rightBorder)
+	{
+		cameraX = playerX - offset;
+	}
+
+	if (playerY < upBorder)
+	{
+		cameraY = playerY + offset;
+	}
+	else if (playerY > downBorder)
+	{
+		cameraY = playerY - offset;
+	}
+
+	float newCameraX = cameraX * smoothFactor + view.getCenter().x * (1 - smoothFactor);
+	float newCameraY = cameraY * smoothFactor + view.getCenter().y * (1 - smoothFactor);
+
+	cameraHitbox.setPosition(hitbox.getPosition());
+	view.setSize(640, 360);
+
+	view.setCenter(newCameraX, newCameraY); // Камера двигается только по X
+
+	return view;
 }

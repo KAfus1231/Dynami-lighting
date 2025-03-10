@@ -12,17 +12,57 @@ Map::~Map() {}
 void Map::initialize() // Í‡Ú‡ 
 {
 	// œ≈–¬€… —ÀŒ…!! ¬—≈ —  ŒÀ»«»ﬂÃ»
-	firstLayer[0] =  "                    ";
-	firstLayer[1] =  "                    ";
-	firstLayer[2] =  "                    ";
-	firstLayer[3] =  "                    ";
-	firstLayer[4] =  "                    ";
-	firstLayer[5] =  "           0        ";
-	firstLayer[6] =  "                    ";
-	firstLayer[7] =  "                    ";
-	firstLayer[8] =  "                    ";
-	firstLayer[9] =  "                    ";
-	firstLayer[10] = "                    ";
+	firstLayer[0] =  "0000000000000000000000000000000000000000000000000";
+	firstLayer[1] =  "0                                               0";
+	firstLayer[2] =  "0                       0000                    0";
+	firstLayer[3] =  "0                                               0";
+	firstLayer[4] =  "0          0                                    0";
+	firstLayer[5] =  "0          0       0000       0000              0";
+	firstLayer[6] =  "0          0                                    0";
+	firstLayer[7] =  "0          0                                    0";
+	firstLayer[8] =  "0                                               0";
+	firstLayer[9] =  "0                               0000            0";
+	firstLayer[10] = "0                                               0";
+	firstLayer[11] = "0       0                                       0";
+	firstLayer[12] = "0       0         0000            0             0";
+	firstLayer[13] = "0       0                         0             0";
+	firstLayer[14] = "0       0                         0             0";
+	firstLayer[15] = "0                                 0             0";
+	firstLayer[16] = "0                                               0";
+	firstLayer[17] = "0            0000                               0";
+	firstLayer[18] = "0                                  0000         0";
+	firstLayer[19] = "0                                               0";
+	firstLayer[20] = "0                                               0";
+	firstLayer[21] = "0                   0                           0";
+	firstLayer[22] = "0       0000        0           0000            0";
+	firstLayer[23] = "0                   0                           0";
+	firstLayer[24] = "0                   0                           0";
+	firstLayer[25] = "0                                               0";
+	firstLayer[26] = "0      0                                        0";
+	firstLayer[27] = "0      0                     0000               0";
+	firstLayer[28] = "0      0                                        0";
+	firstLayer[29] = "0      0                            0000        0";
+	firstLayer[30] = "0               0000                            0";
+	firstLayer[31] = "0                                               0";
+	firstLayer[32] = "0                                0              0";
+	firstLayer[33] = "0                                0              0";
+	firstLayer[34] = "0                                0              0";
+	firstLayer[35] = "0          0000                  0              0";
+	firstLayer[36] = "0                                               0";
+	firstLayer[37] = "0                                               0";
+	firstLayer[38] = "0                                      0        0";
+	firstLayer[39] = "0                                      0        0";
+	firstLayer[40] = "0                    0                 0        0";
+	firstLayer[41] = "0      0000          0                 0        0";
+	firstLayer[42] = "0                    0                          0";
+	firstLayer[43] = "0                    0                          0";
+	firstLayer[44] = "0                                               0";
+	firstLayer[45] = "0                                  0000         0";
+	firstLayer[46] = "0           0000                                0";
+	firstLayer[47] = "0                                               0";
+	firstLayer[48] = "0                                               0";
+	firstLayer[49] = "0000000000000000000000000000000000000000000000000";
+
 	
 }
 

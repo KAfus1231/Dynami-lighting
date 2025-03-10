@@ -3,12 +3,15 @@
 #include <string>
 #include "Player.h"
 
+
 class Map
 {
 private:
+	friend class Enemy1;
 	friend class Player;
-	static const int mapHeight = 11; // высота карты в плитках
-	static const int mapWidth = 20; // ширина
+
+	static const int mapHeight = 50; // высота карты в плитках
+	static const int mapWidth = 50; // ширина
 
 	sf::String firstLayer[mapHeight]; // строка элементов для отрисовки карты
 

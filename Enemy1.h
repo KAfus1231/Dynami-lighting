@@ -12,9 +12,10 @@ public:
 
 	void initialize() override;
 	void draw(sf::RenderWindow& window) override;
+	void collisions(Map& map);
 
 	void move(Player& player);
-	void update(Player& player);
+	void update(Player& player, Map& map);
 	bool fieldOfView(Player& player);
 
 private:
@@ -22,6 +23,7 @@ private:
 	sf::Clock ClockForView;
 
 	sf::RectangleShape view;
+	sf::RectangleShape collisionChecker;
 	
 	bool inView = false;
 

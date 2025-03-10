@@ -18,7 +18,7 @@ int main() {
 	Map map;
 	std::vector<Enemy1> enemyVector;
 
-	for (size_t i = 0; i < 3; i++)
+	for (size_t i = 0; i < 2; i++)
 	{
 		Enemy1 enemy1;
 		enemyVector.push_back(enemy1);
@@ -37,14 +37,14 @@ int main() {
 		player.update(map);
 		map.update();
 
-		for (size_t i = 0; i < enemyVector.size(); i++)
-		{
-			enemyVector[i].update(player);
-		}
-
-
 		window.clear(sf::Color::Black);
 		player.draw(window);
+
+		for (size_t i = 0; i < enemyVector.size(); i++)
+		{
+			enemyVector[i].update(player, map);
+		}
+
 		for (size_t i = 0; i < enemyVector.size(); i++)
 		{
 			enemyVector[i].draw(window);
