@@ -14,17 +14,22 @@ int main() {
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Bouncing Ball with Chipmunk2D");
 	window.setFramerateLimit(60);
 
+	sf::Clock clockForSpawn; // таймер для создания врагов
+
 	Player player;
 	Map map;
 	std::vector<Enemy1> enemyVector;
 
-	for (size_t i = 0; i < 2; i++)
+	for (size_t i = 0; i < 5; i++)
 	{
-		Enemy1 enemy1;
+		Enemy1 enemy1(map);
 		enemyVector.push_back(enemy1);
 	}
 
 
+	// интервал спавна врагов
+	const float spawnInterval = 2.0f; // интервал спавна врагов в секундах
+	clockForSpawn.restart(); // Запуск таймера спавна
 
 	while (window.isOpen()) {
 		sf::Event event;
@@ -33,19 +38,30 @@ int main() {
 				window.close();
 		}
 
+		static int enemyCount = 0; // предел обработки врагов
+
+		if (clockForSpawn.getElapsedTime().asSeconds() >= spawnInterval && enemyCount < enemyVector.size())
+		{
+			clockForSpawn.restart();
+// 			if (enemyVector[enemyCount].getEnemyIsDead()) // удаление врага, если он умер
+// 				enemyVector.erase(enemyVector.begin() + enemyCount);
+			enemyCount++; // если таймер сработал, то предел стал выше
+		}
 
 		player.update(map);
+
+		for (size_t i = 0; i < enemyCount; i++)
+		{
+			enemyVector[i].update(player, map);
+		}
+
 		map.update();
 
 		window.clear(sf::Color::Black);
 		player.draw(window);
 
-		for (size_t i = 0; i < enemyVector.size(); i++)
-		{
-			enemyVector[i].update(player, map);
-		}
 
-		for (size_t i = 0; i < enemyVector.size(); i++)
+		for (size_t i = 0; i < enemyCount; i++)
 		{
 			enemyVector[i].draw(window);
 		}

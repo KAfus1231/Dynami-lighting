@@ -2,9 +2,10 @@
 #include <cstdlib>
 #include <stdlib.h> 
 
-Enemy1::Enemy1()
+Enemy1::Enemy1(Map& map)
 {
 	initialize();
+	hitbox.setPosition(map.getEnemyStartPosition());
 }
 
 Enemy1::~Enemy1()

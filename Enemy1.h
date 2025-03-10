@@ -7,10 +7,11 @@
 class Enemy1 : public Entity
 {
 public:
-	Enemy1();
+	Enemy1(Map& map);
 	~Enemy1();
 
 	void initialize() override;
+	
 	void draw(sf::RenderWindow& window) override;
 	void collisions(Map& map);
 

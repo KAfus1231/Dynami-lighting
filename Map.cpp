@@ -17,7 +17,7 @@ void Map::initialize() // карта
 	firstLayer[2] =  "0                       0000                    0";
 	firstLayer[3] =  "0                                               0";
 	firstLayer[4] =  "0          0                                    0";
-	firstLayer[5] =  "0          0       0000       0000              0";
+	firstLayer[5] =  "0      E   0       0000       0000              0";
 	firstLayer[6] =  "0          0                                    0";
 	firstLayer[7] =  "0          0                                    0";
 	firstLayer[8] =  "0                                               0";
@@ -30,7 +30,7 @@ void Map::initialize() // карта
 	firstLayer[15] = "0                                 0             0";
 	firstLayer[16] = "0                                               0";
 	firstLayer[17] = "0            0000                               0";
-	firstLayer[18] = "0                                  0000         0";
+	firstLayer[18] = "0                           E      0000         0";
 	firstLayer[19] = "0                                               0";
 	firstLayer[20] = "0                                               0";
 	firstLayer[21] = "0                   0                           0";
@@ -39,7 +39,7 @@ void Map::initialize() // карта
 	firstLayer[24] = "0                   0                           0";
 	firstLayer[25] = "0                                               0";
 	firstLayer[26] = "0      0                                        0";
-	firstLayer[27] = "0      0                     0000               0";
+	firstLayer[27] = "0      0           E         0000               0";
 	firstLayer[28] = "0      0                                        0";
 	firstLayer[29] = "0      0                            0000        0";
 	firstLayer[30] = "0               0000                            0";
@@ -48,7 +48,7 @@ void Map::initialize() // карта
 	firstLayer[33] = "0                                0              0";
 	firstLayer[34] = "0                                0              0";
 	firstLayer[35] = "0          0000                  0              0";
-	firstLayer[36] = "0                                               0";
+	firstLayer[36] = "0                        E                      0";
 	firstLayer[37] = "0                                               0";
 	firstLayer[38] = "0                                      0        0";
 	firstLayer[39] = "0                                      0        0";
@@ -57,7 +57,7 @@ void Map::initialize() // карта
 	firstLayer[42] = "0                    0                          0";
 	firstLayer[43] = "0                    0                          0";
 	firstLayer[44] = "0                                               0";
-	firstLayer[45] = "0                                  0000         0";
+	firstLayer[45] = "0                        E         0000         0";
 	firstLayer[46] = "0           0000                                0";
 	firstLayer[47] = "0                                               0";
 	firstLayer[48] = "0                                               0";
@@ -80,7 +80,10 @@ void Map::layerLoad(sf::String layer[])
 			{
 			case('0'): // пол
 				createHitbox(tileWidth, tileHeight, j * tileWidth, i * tileHeight);
-				
+				break;
+			case('E'): // враг
+				enemiesPositions.push_back(sf::Vector2f(j * tileWidth, i * tileHeight));
+				break;
 			}
 		}
 }
@@ -108,4 +111,14 @@ void Map::drawFirstLayer(sf::RenderWindow& window)
 		window.draw(hitbox);
 }
 
+
+sf::Vector2f Map::getEnemyStartPosition()
+{
+	if (!enemiesPositions.empty())
+	{
+		sf::Vector2f enemyPosition = enemiesPositions.front();
+		enemiesPositions.erase(enemiesPositions.begin());
+		return enemyPosition;
+	}
+}
 
