@@ -17,7 +17,7 @@ void Enemy1::initialize()
 	speed = 0.7f;
 	widht = 32.0f;
 	height = 32.0f;
-	hitboxColor = sf::Color::Red;
+	hitboxColor = sf::Color(81, 97, 159);
 
 	hitbox = sf::RectangleShape(sf::Vector2f(widht, height));
 	hitbox.setFillColor(hitboxColor);
@@ -29,17 +29,83 @@ void Enemy1::initialize()
 	collisionChecker.setOutlineThickness(2);
 
 	timeForMovement = 3.0f;
+
+	patrolPoints =
+	{
+		sf::Vector2f(224, 160),
+		sf::Vector2f(320, 160),
+		sf::Vector2f(320, 32)
+	};
+	patrolPointIndex = 0;
+	endOfPatrol = false;
 }
 
 
 void Enemy1::move(Player& player)
 {
-	isMovingUp = false;
-	isMovingLeft = false;
-	isMovingDown = false;
-	isMovingRight = false;
+	movePatrol();
+}
 
-	if (clockForMovement.getElapsedTime().asSeconds() > timeForMovement)
+void Enemy1::movePatrol()
+{
+	if (patrolPoints.empty())
+		return;
+
+	sf::Vector2f target = patrolPoints[patrolPointIndex];
+
+	sf::Vector2f currentPos = hitbox.getPosition();
+
+	// Определяем разницу по осям
+	float diffX = target.x - currentPos.x;
+	float diffY = target.y - currentPos.y;
+
+	const float threshold = 2.0f;
+
+	isMovingUp = isMovingDown = isMovingLeft = isMovingRight = false;
+
+	if (std::abs(diffX) > std::abs(diffY))
+	{
+		// Движемся по оси X
+		if (diffX > threshold) {
+			isMovingRight = true;
+			hitbox.move(3 * speed, 0);
+		}
+		else if (diffX < -threshold) {
+			isMovingLeft = true;
+			hitbox.move(-3 * speed, 0);
+		}
+	}
+	else
+	{
+		// Движемся по оси Y
+		if (diffY > threshold) {
+			isMovingDown = true;
+			hitbox.move(0, 3 * speed);
+		}
+		else if (diffY < -threshold) {
+			isMovingUp = true;
+			hitbox.move(0, -3 * speed);
+		}
+	}
+
+	sf::Vector2f newPos = hitbox.getPosition();
+	if (std::abs(newPos.x - target.x) < threshold && std::abs(newPos.y - target.y) < threshold)
+	{
+		if (!endOfPatrol)
+		{
+			patrolPointIndex == patrolPoints.size() - 1 ? endOfPatrol = true : patrolPointIndex++;
+		}
+		else
+		{
+			patrolPointIndex == 0 ? endOfPatrol = false : patrolPointIndex--;
+		}
+	}
+}
+
+
+void Enemy1::moveHarassment(Player& player)
+{
+	/*if (clockForMovement.getElapsedTime().asSeconds() > timeForMovement)
 	{
 		randNumForMovement = std::rand() % 4 + 1;
 		clockForMovement.restart();
@@ -52,7 +118,7 @@ void Enemy1::move(Player& player)
 
 	switch (randNumForMovement)
 	{
-	case 1: 
+	case 1:
 		if (!upCollision)
 		{
 			hitbox.move(0, -3 * speed);
@@ -66,7 +132,7 @@ void Enemy1::move(Player& player)
 				randNumForMovement = 3; break;
 		}
 
-	case 2: 
+	case 2:
 		if (!leftCollision)
 		{
 			hitbox.move(-3 * speed, 0);
@@ -79,7 +145,7 @@ void Enemy1::move(Player& player)
 			if (randNumForMovement == 2)
 				randNumForMovement = 4; break;
 		}
-	case 3: 
+	case 3:
 		if (!downCollision)
 		{
 			hitbox.move(0, 3 * speed);
@@ -92,7 +158,7 @@ void Enemy1::move(Player& player)
 			if (randNumForMovement == 3)
 				randNumForMovement = 1; break;
 		}
-	case 4: 
+	case 4:
 		if (!rightCollision)
 		{
 			hitbox.move(3 * speed, 0);
@@ -109,7 +175,7 @@ void Enemy1::move(Player& player)
 		break;
 	}
 
-	std::cout << "\nUP - " << upCollision << " DOWN - " << downCollision << " RIGHT - " << rightCollision << " LEFT - " << leftCollision << std::endl;
+	std::cout << "\nUP - " << upCollision << " DOWN - " << downCollision << " RIGHT - " << rightCollision << " LEFT - " << leftCollision << std::endl;*/
 }
 
 void Enemy1::collisions(Map& map)
@@ -162,7 +228,7 @@ void Enemy1::collisions(Map& map)
 
 bool Enemy1::fieldOfView(Player& player)
 {
-	
+
 	if (inView)
 	{
 		view.setSize(sf::Vector2f(192, 192));
@@ -171,7 +237,7 @@ bool Enemy1::fieldOfView(Player& player)
 		view.setOutlineColor(sf::Color::Red);
 		view.setOutlineThickness(2);
 	}
-	
+
 	else
 	{
 		view.setSize(sf::Vector2f(128, 128));
@@ -206,7 +272,6 @@ void Enemy1::update(Player& player, Map& map)
 void Enemy1::draw(sf::RenderWindow& window)
 {
 	window.draw(hitbox);
-	window.draw(view);
-	window.draw(collisionChecker);
+// 	window.draw(view);
+// 	window.draw(collisionChecker);
 }
-

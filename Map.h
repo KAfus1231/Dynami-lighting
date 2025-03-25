@@ -3,7 +3,6 @@
 #include <string>
 #include "Player.h"
 
-
 class Map
 {
 public:
@@ -20,14 +19,15 @@ public:
 private:
 	friend class Enemy1;
 	friend class Player;
+	friend class Shaders;
 
 	static const int mapHeight = 50; // высота карты в плитках
 	static const int mapWidth = 50; // ширина
 
 	sf::String firstLayer[mapHeight]; // строка элементов для отрисовки карты
 	std::vector<sf::Vector2f> enemiesPositions;
-
 	std::vector<sf::RectangleShape> mapHitbox; // хитбоксы для обхектов на карте
+
 	sf::RectangleShape hitbox;
 
 	int tileWidth; // кол-во пикселей в плитке по ширине
@@ -35,5 +35,4 @@ private:
 
 	int totalTilesX; // плитки по X
 	int totalTilesY; // плитки по Y
-
 };

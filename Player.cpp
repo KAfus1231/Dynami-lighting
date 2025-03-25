@@ -16,8 +16,9 @@ void Player::initialize()
 	widht = 32.0f;
 	height = 32.0f;
 
-	hitboxColor = sf::Color::Green;
+	hitboxColor = sf::Color(181, 70, 70);
 	hitbox = sf::RectangleShape(sf::Vector2f(widht, height));
+	hitbox.setOrigin(widht / 2, height / 2);
 	hitbox.setFillColor(hitboxColor);
 	hitbox.setPosition(320, 160);
 
@@ -26,6 +27,11 @@ void Player::initialize()
 	cameraHitbox.setFillColor(sf::Color::Transparent);
 	cameraHitbox.setOutlineColor(sf::Color::Magenta);
 	cameraHitbox.setOutlineThickness(2);
+
+	lamp.setRadius(150);
+	lamp.setFillColor(sf::Color(255, 255, 200, 128));
+	lamp.setOrigin(75, 75);
+	lamp.setPosition(hitbox.getPosition());
 }
 
 void Player::move(Map& map)
@@ -34,7 +40,6 @@ void Player::move(Map& map)
 	isMovingDown = false;
 	isMovingRight = false;
 	isMovingLeft = false;
-
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && !isMovingDown)
 	{
@@ -60,13 +65,15 @@ void Player::move(Map& map)
 		isMovingRight = true;
 	}
 	
-// 	{
-// 		system("cls");
-// 		std::cout << "W - " << isMovingUp << " A - " << isMovingLeft << " S - " << isMovingDown << " D - " << isMovingRight << std::endl;
-// 		std::cout << direction.x << " - " << direction.y;
-// 		std::cout << "\nUP - " << upCollision << " DOWN - " << downCollision << " RIGHT - " << rightCollision << " LEFT - " << leftCollision << std::endl;
-// 	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+	{
+		hitbox.rotate(5);
+	}
 
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+	{
+		hitbox.rotate(-5);
+	}
 }
 
 void Player::collisions(Map& map)
@@ -131,21 +138,6 @@ void Player::collisions(Map& map)
 	}
 }
 
-
-void Player::update(Map &map)
-{
-	collisions(map);
-	move(map);
-
-	view = camera(view);
-}
-
-void Player::draw(sf::RenderWindow& window)
-{
-	window.draw(hitbox);
-	window.setView(view);
-}
-
 sf::View Player::camera(sf::View view)
 {
 	int offset = 10;
@@ -190,6 +182,57 @@ sf::View Player::camera(sf::View view)
 	view.setSize(640, 360);
 
 	view.setCenter(newCameraX, newCameraY); // Камера двигается только по X
+	/*view.setRotation(hitbox.getRotation());*/
 
 	return view;
 }
+
+void Player::lantern(sf::RenderWindow& window)
+{
+	//flashlight.setPointCount(3); // Треугольник
+
+	//// Задаём форму конуса (угол обзора фонаря)
+	//flashlight.setPoint(0, sf::Vector2f(0, 0));        // Вершина (центр фонаря)
+	//flashlight.setPoint(1, sf::Vector2f(100, -200));    // Левая граница света
+	//flashlight.setPoint(2, sf::Vector2f(-100, -200));   // Правая граница света
+
+	//flashlight.setFillColor(sf::Color(255, 255, 200, 128)); // Жёлтый свет
+	//flashlight.setOrigin(0, 0);
+
+	//flashlight.setPosition(hitbox.getPosition());
+	//flashlight.setRotation(hitbox.getRotation());
+
+	lamp.setPosition(hitbox.getPosition().x - 75, hitbox.getPosition().y - 75);
+}
+
+void Player::update(Map &map, sf::RenderWindow& window)
+{
+	collisions(map);
+	move(map);
+
+	lantern(window);
+
+	view = camera(view);
+}
+
+void Player::draw(sf::RenderWindow& window)
+{
+	window.draw(hitbox);
+	window.setView(view);
+}
+
+sf::Vector2f Player::getViewCenter()
+{
+	return view.getCenter();
+}
+
+sf::ConvexShape Player::getLantern()
+{
+	return flashlight;
+}
+
+sf::CircleShape Player::getLamp()
+{
+	return lamp;
+}
+

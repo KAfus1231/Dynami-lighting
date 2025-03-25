@@ -5,31 +5,35 @@
 #include "Player.h"
 #include "Enemy1.h"
 #include "Map.h"
-
+#include "Shaders.h"
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 360
 
 int main() {
+	setlocale(0, "");
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Bouncing Ball with Chipmunk2D");
 	window.setFramerateLimit(60);
 
 	sf::Clock clockForSpawn; // таймер для создания врагов
 
+	//-----------------------------------------HEADERS------------------------------------
+
 	Player player;
 	Map map;
 	std::vector<Enemy1> enemyVector;
-
-	for (size_t i = 0; i < 5; i++)
+	Shaders shaders(window);
+	for (size_t i = 0; i < 1; i++)
 	{
 		Enemy1 enemy1(map);
 		enemyVector.push_back(enemy1);
 	}
 
-
 	// интервал спавна врагов
 	const float spawnInterval = 2.0f; // интервал спавна врагов в секундах
 	clockForSpawn.restart(); // Запуск таймера спавна
+
+	//----------------------------------------GAMELOOP------------------------------------
 
 	while (window.isOpen()) {
 		sf::Event event;
@@ -38,17 +42,19 @@ int main() {
 				window.close();
 		}
 
-		static int enemyCount = 0; // предел обработки врагов
+		//-----------------------------------------CONSTS---------------------------------------
 
+		static int enemyCount = 0; // предел обработки врагов
 		if (clockForSpawn.getElapsedTime().asSeconds() >= spawnInterval && enemyCount < enemyVector.size())
 		{
 			clockForSpawn.restart();
-// 			if (enemyVector[enemyCount].getEnemyIsDead()) // удаление врага, если он умер
-// 				enemyVector.erase(enemyVector.begin() + enemyCount);
+
 			enemyCount++; // если таймер сработал, то предел стал выше
 		}
 
-		player.update(map);
+		//-----------------------------------------UPDATE----------------------------------------
+
+		player.update(map, window);
 
 		for (size_t i = 0; i < enemyCount; i++)
 		{
@@ -56,16 +62,20 @@ int main() {
 		}
 
 		map.update();
+		shaders.update(window, player, map);
+		//-----------------------------------------DRAW------------------------------------------
 
-		window.clear(sf::Color::Black);
-		player.draw(window);
-
+		window.clear(/*sf::Color(102, 97, 97)*/ sf::Color::Black);
 
 		for (size_t i = 0; i < enemyCount; i++)
 		{
 			enemyVector[i].draw(window);
 		}
+
 		map.drawFirstLayer(window);
+		player.draw(window);
+		shaders.draw(window, player);
+
 		window.display();
 	}
 	return 0;
