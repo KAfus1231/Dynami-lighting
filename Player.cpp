@@ -187,30 +187,16 @@ sf::View Player::camera(sf::View view)
 	return view;
 }
 
-void Player::lantern(sf::RenderWindow& window)
+void Player::lantern(sf::RenderWindow& window, Map& map, Shaders& shader)
 {
-	//flashlight.setPointCount(3); // Треугольник
-
-	//// Задаём форму конуса (угол обзора фонаря)
-	//flashlight.setPoint(0, sf::Vector2f(0, 0));        // Вершина (центр фонаря)
-	//flashlight.setPoint(1, sf::Vector2f(100, -200));    // Левая граница света
-	//flashlight.setPoint(2, sf::Vector2f(-100, -200));   // Правая граница света
-
-	//flashlight.setFillColor(sf::Color(255, 255, 200, 128)); // Жёлтый свет
-	//flashlight.setOrigin(0, 0);
-
-	//flashlight.setPosition(hitbox.getPosition());
-	//flashlight.setRotation(hitbox.getRotation());
-
-	lamp.setPosition(hitbox.getPosition().x - 75, hitbox.getPosition().y - 75);
+	shader.dynamicLighting(window, hitbox.getPosition(), map);
 }
 
-void Player::update(Map &map, sf::RenderWindow& window)
+void Player::update(Map &map, sf::RenderWindow& window, Shaders& shader)
 {
 	collisions(map);
 	move(map);
-
-	lantern(window);
+	lantern(window, map, shader);
 
 	view = camera(view);
 }

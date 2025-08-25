@@ -40,7 +40,6 @@ void Enemy1::initialize()
 	endOfPatrol = false;
 }
 
-
 void Enemy1::move(Player& player)
 {
 	movePatrol();
@@ -101,7 +100,6 @@ void Enemy1::movePatrol()
 		}
 	}
 }
-
 
 void Enemy1::moveHarassment(Player& player)
 {
@@ -226,28 +224,41 @@ void Enemy1::collisions(Map& map)
 	}
 }
 
-bool Enemy1::fieldOfView(Player& player)
+void Enemy1::update(Player& player, Map& map)
 {
+	collisions(map);
+	move(player);
+	triggers.fieldOfView(*this, player);
+}
 
+void Enemy1::draw(sf::RenderWindow& window)
+{
+	window.draw(hitbox);
+	triggers.draw(window);
+// 	window.draw(collisionChecker);
+}
+
+bool Enemy1::Triggers::fieldOfView(Enemy1& enemy1, Player& player)
+{
 	if (inView)
 	{
-		view.setSize(sf::Vector2f(192, 192));
-		view.setPosition(hitbox.getPosition().x - 80, hitbox.getPosition().y - 80);
-		view.setFillColor(sf::Color::Transparent);
-		view.setOutlineColor(sf::Color::Red);
-		view.setOutlineThickness(2);
+		viewZone.setSize(sf::Vector2f(192, 192));
+		viewZone.setPosition(enemy1.hitbox.getPosition().x - 80, enemy1.hitbox.getPosition().y - 80);
+		viewZone.setFillColor(sf::Color::Transparent);
+		viewZone.setOutlineColor(sf::Color::Red);
+		viewZone.setOutlineThickness(2);
 	}
 
 	else
 	{
-		view.setSize(sf::Vector2f(128, 128));
-		view.setPosition(hitbox.getPosition().x - 48, hitbox.getPosition().y - 48);
-		view.setFillColor(sf::Color::Transparent);
-		view.setOutlineColor(sf::Color::Blue);
-		view.setOutlineThickness(2);
+		viewZone.setSize(sf::Vector2f(128, 128));
+		viewZone.setPosition(enemy1.hitbox.getPosition().x - 48, enemy1.hitbox.getPosition().y - 48);
+		viewZone.setFillColor(sf::Color::Transparent);
+		viewZone.setOutlineColor(sf::Color::Blue);
+		viewZone.setOutlineThickness(2);
 	}
 
-	if (view.getGlobalBounds().intersects(player.getHitbox().getGlobalBounds()))
+	if (viewZone.getGlobalBounds().intersects(player.getHitbox().getGlobalBounds()))
 	{
 		inView = true;
 		ClockForView.restart();
@@ -261,17 +272,9 @@ bool Enemy1::fieldOfView(Player& player)
 	return inView;
 }
 
-void Enemy1::update(Player& player, Map& map)
+void Enemy1::Triggers::draw(sf::RenderWindow& window)
 {
-	collisions(map);
-	move(player);
-	fieldOfView(player);
+	window.draw(viewZone);
 }
 
 
-void Enemy1::draw(sf::RenderWindow& window)
-{
-	window.draw(hitbox);
-// 	window.draw(view);
-// 	window.draw(collisionChecker);
-}

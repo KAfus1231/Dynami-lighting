@@ -7,6 +7,16 @@
 class Enemy1 : public Entity
 {
 public:
+	struct Triggers
+	{
+		sf::Clock ClockForView;
+		sf::RectangleShape viewZone;
+		bool inView = false;
+
+		bool fieldOfView(Enemy1& enemy1, Player& player);
+		void draw(sf::RenderWindow& window);
+	};
+	
 	Enemy1(Map& map);
 	~Enemy1();
 
@@ -19,21 +29,16 @@ public:
 	void movePatrol();
 	void moveHarassment(Player& player);
 	void update(Player& player, Map& map);
-	bool fieldOfView(Player& player);
-
 private:
 	std::vector<sf::Vector2f> patrolPoints;
 	int patrolPointIndex;
 	bool endOfPatrol;
 
 	sf::Clock clockForMovement;
-	sf::Clock ClockForView;
-
-	sf::RectangleShape view;
 	sf::RectangleShape collisionChecker;
-
-	bool inView = false;
 
 	float timeForMovement;
 	int randNumForMovement;
+
+	Triggers triggers;
 };

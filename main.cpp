@@ -54,7 +54,7 @@ int main() {
 
 		//-----------------------------------------UPDATE----------------------------------------
 
-		player.update(map, window);
+		player.update(map, window, shaders);
 
 		for (size_t i = 0; i < enemyCount; i++)
 		{
@@ -62,10 +62,9 @@ int main() {
 		}
 
 		map.update();
-		shaders.update(window, player, map);
 		//-----------------------------------------DRAW------------------------------------------
 
-		window.clear(/*sf::Color(102, 97, 97)*/ sf::Color::Black);
+		window.clear(sf::Color(102, 97, 97));
 
 		for (size_t i = 0; i < enemyCount; i++)
 		{
@@ -74,7 +73,7 @@ int main() {
 
 		map.drawFirstLayer(window);
 		player.draw(window);
-		shaders.draw(window, player);
+		shaders.draw(window);
 
 		window.display();
 	}

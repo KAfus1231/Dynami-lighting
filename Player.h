@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Entity.h"
 #include "Map.h"
+#include "Shaders.h"
 
 class Map;
 
@@ -17,9 +18,9 @@ public:
 	void collisions(Map& map);
 
 	void move(Map& map);
-	void update(Map& map, sf::RenderWindow& window);
+	void update(Map& map, sf::RenderWindow& window, Shaders& shader);
 	sf::View camera(sf::View view);
-	void lantern(sf::RenderWindow& window);
+	void lantern(sf::RenderWindow& window, Map& map, Shaders& shader);
 
 	sf::Vector2f getViewCenter();
 	sf::ConvexShape getLantern();
@@ -29,4 +30,5 @@ private:
 	sf::ConvexShape flashlight;
 	sf::CircleShape lamp;
 	sf::View view;
+	sf::Clock clockForLantern;
 };

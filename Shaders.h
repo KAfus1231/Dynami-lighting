@@ -1,8 +1,9 @@
 #pragma once
-#pragma once
 #include <SFML/Graphics.hpp>
 #include <string>
 #include "Player.h"
+
+class Map;
 
 class Shaders
 {
@@ -12,8 +13,7 @@ public:
 
 	void initialize(sf::RenderWindow& window);
 	void load(sf::RenderWindow& window);
-	void update(sf::RenderWindow& window, Player& player, Map& map);
-	void draw(sf::RenderWindow& window, Player& player);
+	void draw(sf::RenderWindow& window);
 	void dynamicLighting(sf::RenderWindow& window, sf::Vector2f startPos, Map& map);
 
 	std::vector<std::pair<sf::Vector2f, sf::Vector2f>> getRectEdges(const sf::FloatRect& rect);
@@ -25,7 +25,7 @@ private:
 	friend class Player;
 	friend class Enemy1;
 
-	sf::Shader lampShader;
+	sf::Shader lightShader;
 	sf::VertexArray polygon;
 
 	sf::RenderTexture darkness;

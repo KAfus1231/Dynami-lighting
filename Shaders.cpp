@@ -14,7 +14,7 @@ void Shaders::load(sf::RenderWindow& window)
 {
 	try
 	{
-		if (!lampShader.loadFromFile("assets/shaders/playerLampShader.frag", sf::Shader::Fragment))
+		if (!lightShader.loadFromFile("assets/shaders/playerLampShader.frag", sf::Shader::Fragment))
 			throw "void::Shaders::load::playerLampShader.frag";
 	}
 	catch (const char* errMsg)
@@ -78,8 +78,7 @@ void Shaders::dynamicLighting(sf::RenderWindow& window, sf::Vector2f startPos, M
 	if (length > 0)
 		baseDir /= length;
 
-	// Угол раскрытия фонарика (в радианах)
-	float flashlightAngle = 60.0f * 3.14159265f / 180.f;
+	float flashlightAngle = 360.0f * 3.14159265f / 180.f;
 	int rayCount = 50; // Количество лучей (чем больше, тем плавнее)
 	float flashlightLength = 250.0f; // Дальность лучей
 
@@ -131,20 +130,19 @@ void Shaders::dynamicLighting(sf::RenderWindow& window, sf::Vector2f startPos, M
 		polygon.append(sf::Vertex(point, sf::Color(0, 0, 0, 0)));
 	}
 
+	std::cout << startPos.x << " - " << startPos.y << std::endl;
 
-	//---------------------------------------------------СЦЕНА СВЕТА-----------------------------------------------------------
+	lightShader.setUniform("texture", darkness.getTexture()); // Текстура с полигоном света
+	lightShader.setUniform("resolution", sf::Vector2f(1600, 1600));
 }
 
-void Shaders::update(sf::RenderWindow& window, Player& player, Map& map)
-{
-	dynamicLighting(window, player.getHitboxPosition(), map);
-}
-
-void Shaders::draw(sf::RenderWindow& window, Player& player)
+void Shaders::draw(sf::RenderWindow& window)
 {
 	darkness.clear(sf::Color(0, 0, 0, 220));
 	darkness.draw(polygon, sf::BlendNone);
 	darkness.display();
+	
+	darknessSprite.setTexture(darkness.getTexture());
 
 	window.draw(darknessSprite);
 }

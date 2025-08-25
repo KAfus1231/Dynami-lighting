@@ -1,43 +1,26 @@
-#ifdef GL_ES
-precision mediump float;
-#endif
-
-// uniform-переменные, передаваемые из SFML:
-uniform sampler2D texture;  // Твоя текстура, содержащая маску (полигон raycasting)
-uniform vec2 resolution;    // Размер текстуры (например, 1000x1000)
-uniform vec2 lightPos;      // Позиция фонаря в пикселях (например, в тех же координатах, что gl_FragCoord)
-
-// Параметры для затухания света (настрой под себя)
-const float radius = 150.0;  // Радиус, в пределах которого свет максимально яркий
-const float falloff = 50.0;  // Зона плавного перехода от яркости к темноте
+// lightShader.frag
+uniform sampler2D texture;
+uniform vec2 resolution;
 
 void main()
 {
-    // Текущие координаты пикселя
-    vec2 fragCoord = gl_FragCoord.xy;
-    vec2 correctedLightPos = lightPos;
-    // Нормализуем координаты (0..1), если потребуется, но здесь работаем в пикселях
-    // vec2 uv = fragCoord / resolution;
+    vec2 uv = gl_FragCoord.xy / resolution;
     
-    // Получаем значение маски из текстуры
-    // Предполагается, что в маске в альфа-канале заложена форма света (из raycasting)
-    vec4 maskColor = texture2D(texture, fragCoord / resolution);
-    float mask = maskColor.a;
+    // Простейшее размытие: берем среднее значение из ближайших пикселей
+    vec4 color = vec4(0.0);
+    float total = 0.0;
+    float offset = 1.0 / resolution.x; // можно добавить разные смещения для x и y
+
+    for (int x = -1; x <= 1; x++) {
+        for (int y = -1; y <= 1; y++) {
+            vec2 samplePos = uv + vec2(x, y) * offset;
+            vec4 sample = texture2D(texture, samplePos);
+            float weight = 1.0;
+            color += sample * weight;
+            total += weight;
+        }
+    }
     
-    // Вычисляем расстояние от текущего пикселя до источника света (фонаря)
-    float dist = distance(fragCoord, correctedLightPos);
-    
-    // Вычисляем ослабление света по расстоянию:
-    // Если расстояние меньше radius, intensity=1,
-    // если больше (radius+falloff) — intensity=0, а между плавно.
-    float intensity = 1.0 - smoothstep(radius, radius + falloff, dist);
-    
-    // Итоговая альфа — это произведение маски и интенсивности,
-    // что означает: если маска не определена (0), свет отсутствует; если маска=1, свет регулируется по расстоянию.
-    float finalAlpha = mask * intensity;
-    
-    // Цвет фонаря: теплый желтоватый свет
-    vec3 lightColor = vec3(1.0, 1.0, 0.8);
-    
-    gl_FragColor = vec4(lightColor, finalAlpha);
+    color /= total;
+    gl_FragColor = color;
 }
