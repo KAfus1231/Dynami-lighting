@@ -1,3 +1,2 @@
 
-
-![dynamic-lighting gif](https://github.com/user-attachments/assets/9ac7b280-bda7-4a42-9720-9e95feeab086)
+![dynamic-lighting](https://github.com/user-attachments/assets/e60546b8-ad74-4778-b945-0021714d9032)
